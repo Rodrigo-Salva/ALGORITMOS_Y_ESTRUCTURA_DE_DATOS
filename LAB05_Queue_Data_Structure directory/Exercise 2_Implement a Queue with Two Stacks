@@ -1,0 +1,54 @@
+class QueueWithTwoStacks:
+    def __init__(self):
+        self.stack_in = []
+        self.stack_out = []
+
+    def enqueue(self, value):
+        self.stack_in.append(value)
+
+    def dequeue(self):
+        if self.isEmpty():
+            raise IndexError("Queue is empty")
+        if not self.stack_out:
+            while self.stack_in:
+                self.stack_out.append(self.stack_in.pop())
+        return self.stack_out.pop()
+
+    def peek(self):
+        if self.isEmpty():
+            raise IndexError("Queue is empty")
+        if not self.stack_out:
+            while self.stack_in:
+                self.stack_out.append(self.stack_in.pop())
+        return self.stack_out[-1]
+
+    def isEmpty(self):
+        return not self.stack_in and not self.stack_out
+
+    def size(self):
+        return len(self.stack_in) + len(self.stack_out)
+
+if __name__ == "__main__":
+    print("Starting test of QueueWithTwoStacks...")
+
+    queue = QueueWithTwoStacks()
+    queue.enqueue(1)
+    queue.enqueue(2)
+    queue.enqueue(3)
+
+    print("Size after 3 enqueues:", queue.size())        # Expected: 3
+    print("First element (peek):", queue.peek())         # Expected: 1
+    print("Dequeue:", queue.dequeue())                   # Expected: 1
+    print("Peek after dequeue:", queue.peek())           # Expected: 2
+    print("Size now:", queue.size())                     # Expected: 2
+    print("Dequeue again:", queue.dequeue())             # Expected: 2
+    print("Dequeue again:", queue.dequeue())             # Expected: 3
+
+    print("Is empty?", queue.isEmpty())                  # Expected: True
+
+    try:
+        print("Trying to dequeue from empty queue...")
+        queue.dequeue()
+    except IndexError as e:
+        print("Caught error:", e)
+

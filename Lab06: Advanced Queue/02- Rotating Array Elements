@@ -1,0 +1,25 @@
+from collections import deque
+
+class CircularQueueRotator:
+    def __init__(self, array):
+        self.queue = deque(array)
+
+    def rotate(self, k):
+        k = k % len(self.queue)
+        for _ in range(k):
+            last = self.queue.pop()
+            self.queue.appendleft(last)
+
+    def get_rotated_array(self):
+        return list(self.queue)
+
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    arr = [1, 2, 3, 4, 5, 6, 7]
+    k = 3
+
+    rotator = CircularQueueRotator(arr)
+    rotator.rotate(k)
+    result = rotator.get_rotated_array()
+    print("Rotated array:", result)

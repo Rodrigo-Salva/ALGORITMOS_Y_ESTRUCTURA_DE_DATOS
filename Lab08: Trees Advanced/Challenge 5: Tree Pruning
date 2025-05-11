@@ -1,0 +1,112 @@
+# Clase que representa un nodo del árbol binario
+class TreeNode:
+    def __init__(self, val):
+        self.val = val            # Asigna el valor al nodo
+        self.left = None          # Inicializa el hijo izquierdo como None
+        self.right = None         # Inicializa el hijo derecho como None
+
+# Clase del árbol binario con función para construirlo desde una lista
+class BinaryTree:
+    def __init__(self):
+        self.root = None         # Inicializa la raíz del árbol como None
+
+    def build_tree_from_list(self, values):
+        if not values:
+            return None  # Si la lista de valores está vacía, retorna None (sin árbol)
+
+        self.root = TreeNode(values[0])  # Crea el nodo raíz con el primer valor de la lista
+        queue = [self.root]  # Inicializa una cola con la raíz para ir añadiendo hijos
+        i = 1  # Índice que se usa para recorrer la lista de valores
+
+        while queue and i < len(values):  # Mientras haya nodos en la cola y no se haya recorrido toda la lista
+            current = queue.pop(0)  # Extrae el primer nodo de la cola
+
+            # Si hay un valor para el hijo izquierdo y no es None, lo asigna
+            if i < len(values) and values[i] is not None:
+                current.left = TreeNode(values[i])  # Crea un nuevo nodo izquierdo
+                queue.append(current.left)  # Añade el hijo izquierdo a la cola
+            i += 1  # Incrementa el índice para mover al siguiente valor
+
+            # Si hay un valor para el hijo derecho y no es None, lo asigna
+            if i < len(values) and values[i] is not None:
+                current.right = TreeNode(values[i])  # Crea un nuevo nodo derecho
+                queue.append(current.right)  # Añade el hijo derecho a la cola
+            i += 1  # Incrementa el índice para mover al siguiente valor
+
+# Función para podar el árbol, eliminando subárboles que no contienen el valor objetivo
+def prune_tree(node, target):
+    if not node:
+        return None  # Si el nodo es nulo, se retorna None (caso base)
+
+    # Se podan recursivamente los hijos izquierdo y derecho
+    node.left = prune_tree(node.left, target)  # Llamada recursiva para podar el hijo izquierdo
+    node.right = prune_tree(node.right, target)  # Llamada recursiva para podar el hijo derecho
+
+    # Si el nodo actual no tiene el valor objetivo y no tiene hijos válidos, se elimina
+    if node.val != target and not node.left and not node.right:
+        return None  # Se descarta este nodo, ya que no contiene el valor objetivo ni tiene hijos válidos
+
+    return node  # Si el nodo tiene el valor objetivo o hijos válidos, se mantiene
+
+# Función auxiliar para imprimir el árbol (útil para pruebas)
+def print_tree(root):
+    if not root:
+        return []  # Si el árbol está vacío, se retorna una lista vacía
+    result = []  # Lista para almacenar los valores del árbol
+    queue = [root]  # Cola que almacena los nodos a procesar
+
+    while queue:
+        current = queue.pop(0)  # Extrae el primer nodo de la cola
+        if current:
+            result.append(current.val)  # Si el nodo no es None, se añade su valor a la lista de resultados
+            queue.append(current.left)  # Añade el hijo izquierdo del nodo a la cola
+            queue.append(current.right)  # Añade el hijo derecho del nodo a la cola
+        else:
+            result.append(None)  # Si el nodo es None, se añade un None a la lista
+
+    # Eliminar los nulos al final de la lista para una mejor visualización del árbol
+    while result and result[-1] is None:
+        result.pop()  # Elimina los elementos None que están al final
+
+    return result  # Devuelve la lista de valores del árbol
+
+
+
+def test_prune_tree():
+    print("Test Case 1: Prune for value 1")
+    tree1 = BinaryTree()
+    tree1.build_tree_from_list([1, 2, 3, 4, 5, None, 6])
+    pruned1 = prune_tree(tree1.root, 1)
+    print(print_tree(pruned1))  # Resultado esperado: [1]
+
+    print("Test Case 2: Multiple target values")
+    tree2 = BinaryTree()
+    tree2.root = TreeNode(1)
+    tree2.root.left = TreeNode(2)
+    tree2.root.right = TreeNode(3)
+    tree2.root.left.left = TreeNode(1)
+    tree2.root.left.right = TreeNode(5)
+    tree2.root.right.right = TreeNode(1)
+    pruned2 = prune_tree(tree2.root, 1)
+    print(print_tree(pruned2))  # Resultado esperado: [1, 2, 3, 1, None, None, 1]
+
+    print("Test Case 3: Empty tree")
+    tree3 = BinaryTree()
+    pruned3 = prune_tree(tree3.root, 1)
+    print(print_tree(pruned3))  # Resultado esperado: []
+
+    print("Test Case 4: Target not in tree")
+    tree4 = BinaryTree()
+    tree4.build_tree_from_list([1, 2, 3])
+    pruned4 = prune_tree(tree4.root, 4)
+    print(print_tree(pruned4))  # Resultado esperado: []
+
+    print("Test Case 5: All nodes are target")
+    tree5 = BinaryTree()
+    tree5.root = TreeNode(5)
+    tree5.root.left = TreeNode(5)
+    tree5.root.right = TreeNode(5)
+    pruned5 = prune_tree(tree5.root, 5)
+    print(print_tree(pruned5))  # Resultado esperado: [5, 5, 5]
+
+test_prune_tree()

@@ -1,0 +1,90 @@
+# Clase que representa un nodo del árbol
+class TreeNode:
+    def __init__(self, val):
+        self.val = val        # Valor del nodo
+        self.left = None      # Hijo izquierdo
+        self.right = None     # Hijo derecho
+
+# Clase para el Árbol Binario de Búsqueda (BST)
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None  # Inicialmente el árbol está vacío
+
+    # Método para insertar un valor en el árbol
+    def insert(self, val):
+        def _insert(node, val):
+            if not node:
+                return TreeNode(val)  # Si el nodo es nulo, crea uno nuevo
+            if val < node.val:
+                node.left = _insert(node.left, val)   # Inserta a la izquierda si es menor
+            else:
+                node.right = _insert(node.right, val) # Inserta a la derecha si es mayor o igual
+            return node  # Retorna el nodo actual con los hijos actualizados
+
+        self.root = _insert(self.root, val)  # Llama la función recursiva desde la raíz
+
+# Función que realiza un recorrido inorder (izquierda, raíz, derecha)
+def inorder_traversal(node):
+    if not node:
+        return []  # Si el nodo es nulo, retorna lista vacía
+    # Concatena: resultado de la izquierda + valor del nodo + resultado de la derecha
+    return inorder_traversal(node.left) + [node.val] + inorder_traversal(node.right)
+
+# Función que construye un árbol balanceado a partir de una lista ordenada
+def build_balanced_bst(nums):
+    if not nums:
+        return None  # Si la lista está vacía, retorna None (nodo nulo)
+    mid = len(nums) // 2  # Encuentra el índice del elemento central
+    root = TreeNode(nums[mid])  # Crea el nodo raíz con el elemento del medio
+    root.left = build_balanced_bst(nums[:mid])        # Llama recursivamente a la izquierda
+    root.right = build_balanced_bst(nums[mid + 1:])   # Llama recursivamente a la derecha
+    return root  # Retorna el nodo raíz del árbol construido
+
+
+# Función principal que balancea un árbol BST dado
+def balance_bst(tree):
+    sorted_vals = inorder_traversal(tree.root)  # Obtiene los valores ordenados por recorrido inorder
+    balanced_root = build_balanced_bst(sorted_vals)  # Construye el árbol balanceado
+    balanced_tree = BinarySearchTree()  # Crea una nueva instancia del árbol BST
+    balanced_tree.root = balanced_root  # Asigna la raíz balanceada
+    return balanced_tree  # Retorna el nuevo árbol balanceado
+
+def print_tree_inorder(node):
+    if not node:
+        return []
+    return print_tree_inorder(node.left) + [node.val] + print_tree_inorder(node.right)
+
+
+def test_balance_bst():
+    # Test Case 1: Already balanced tree 🌳
+    bst1 = BinarySearchTree()
+    for val in [4, 2, 6, 1, 3, 5, 7]:
+        bst1.insert(val)
+    
+    # Test Case 2: Right-skewed tree 📐➡️
+    bst2 = BinarySearchTree()
+    for val in [1, 2, 3, 4, 5]:
+        bst2.insert(val)
+
+    # Test Case 3: Left-skewed tree 📐⬅️
+    bst3 = BinarySearchTree()
+    for val in [5, 4, 3, 2, 1]:
+        bst3.insert(val)
+
+    # Test Case 4: Empty tree 🈳
+    bst4 = BinarySearchTree()
+
+    # Test Case 5: Single-node tree 🌱
+    bst5 = BinarySearchTree()
+    bst5.insert(42)
+
+    trees = [bst1, bst2, bst3, bst4, bst5]
+    for i, tree in enumerate(trees, 1):
+        balanced = balance_bst(tree)
+        original = inorder_traversal(tree.root)
+        balanced_result = print_tree_inorder(balanced.root)
+        assert original == balanced_result, f"Test case {i} failed"
+        print(f"✅ Test case {i} passed. Inorder: {balanced_result}")
+
+
+test_balance_bst()

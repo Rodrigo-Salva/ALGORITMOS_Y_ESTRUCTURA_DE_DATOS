@@ -1,13 +1,13 @@
 from collections import defaultdict, deque
 
 class TreeNode:
-    def _init_(self, value):
+    def __init__(self, value):
         self.val = value
         self.left = None
         self.right = None
 
 class BinaryTree:
-    def _init_(self):
+    def __init__(self):
         self.root = None
 
     def build_tree_from_list(self, values):

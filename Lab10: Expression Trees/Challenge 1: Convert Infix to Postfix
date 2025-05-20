@@ -1,0 +1,62 @@
+def infix_to_postfix(tokens):
+    """Convert infix expression to postfix notation using the shunting yard algorithm."""
+
+    # Diccionario que define la precedencia de los operadores
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2}
+
+    # Lista que almacenará el resultado en notación postfija
+    output = []
+
+    # Pila para guardar temporalmente operadores y paréntesis
+    stack = []
+
+    # Recorremos cada token del input
+    for token in tokens:
+        if token.isalnum():  # Si el token es un número o una variable (operando)
+            output.append(token)  # Se agrega directamente a la salida postfija
+        elif token in precedence:  # Si es un operador (+, -, *, /)
+            # Mientras haya operadores en la pila con mayor o igual precedencia
+            while stack and stack[-1] != '(' and precedence.get(stack[-1], 0) >= precedence[token]:
+                output.append(stack.pop())  # Se saca de la pila y se agrega al output
+            stack.append(token)  # Finalmente, se coloca el operador actual en la pila
+        elif token == '(':  # Si es un paréntesis de apertura
+            stack.append(token)  # Se coloca en la pila para controlar agrupación
+        elif token == ')':  # Si es un paréntesis de cierre
+            # Sacamos operadores de la pila hasta encontrar el paréntesis de apertura
+            while stack and stack[-1] != '(':
+                output.append(stack.pop())  # Agregamos operadores al output
+            stack.pop()  # Quitamos el '(' de la pila (no va al output)
+
+    # Al final, vaciamos cualquier operador restante en la pila
+    while stack:
+        output.append(stack.pop())  # Todos los operadores se pasan al output
+
+    return output  # Se devuelve la expresión en notación postfija
+
+# ✅ Test cases
+# Test 1: Simple addition
+# Input: 2 + 3
+# Output: 2 3 +
+print(infix_to_postfix(['2', '+', '3']) == ['2', '3', '+'])  # ➕ Simple operation
+
+# Test 2: Operator precedence
+# Input: 2 + 3 * 4
+# Output: 2 3 4 * +
+print(infix_to_postfix(['2', '+', '3', '*', '4']) == ['2', '3', '4', '*', '+'])  # 📊 Precedence test
+
+# Test 3: Parentheses override precedence
+# Input: (2 + 3) * 4
+# Output: 2 3 + 4 *
+print(infix_to_postfix(['(', '2', '+', '3', ')', '*', '4']) == ['2', '3', '+', '4', '*'])  # 🔗 Parentheses
+
+# Test 4: Complex expression
+# Input: (1 + 2) * (3 - 4)
+# Output: 1 2 + 3 4 - *
+print(infix_to_postfix(['(', '1', '+', '2', ')', '*', '(', '3', '-', '4', ')']) == ['1', '2', '+', '3', '4', '-', '*'])  # 🧮 Complex
+
+# Test 5: Multiple operators
+# Input: a + b * c / d
+# Output: a b c * d / +
+print(infix_to_postfix(['a', '+', 'b', '*', 'c', '/', 'd']) == ['a', 'b', 'c', '*', 'd', '/', '+'])  # 🔤 Variables
+
+

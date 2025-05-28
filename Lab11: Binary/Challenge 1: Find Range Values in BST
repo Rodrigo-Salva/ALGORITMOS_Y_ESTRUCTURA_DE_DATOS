@@ -71,8 +71,3 @@ def test_range_query():
 
 # 🚀 Run all tests
 test_range_query()
-
-print(range_query(build_bst([15]), 10, 20) == [15])  # 🌱
-
-# Test 5: Edge values
-print(range_query(build_bst([15, 10, 20, 5, 25]), 10, 20) == [10, 15, 20])  # 🔗

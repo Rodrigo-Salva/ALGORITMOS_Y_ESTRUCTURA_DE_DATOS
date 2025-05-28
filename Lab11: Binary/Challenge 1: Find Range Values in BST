@@ -1,45 +1,45 @@
 class TreeNode:
     def __init__(self, val):
-        self.val = val
-        self.left = None
-        self.right = None
+        self.val = val            # Guardamos el valor del nodo
+        self.left = None          # Inicializamos el hijo izquierdo como None
+        self.right = None         # Inicializamos el hijo derecho como None
 
 def build_bst(values):
-    if not values:
-        return None
+    if not values:               # Si la lista está vacía, no hay árbol que construir
+        return None              # Retornamos None
 
-    root = TreeNode(values[0])
-    for val in values[1:]:
-        insert(root, val)
-    return root
+    root = TreeNode(values[0])   # Creamos la raíz del árbol con el primer valor de la lista
+    for val in values[1:]:       # Recorremos el resto de valores
+        insert(root, val)        # Insertamos cada valor en el árbol usando la función insert
+    return root                  # Devolvemos la raíz del árbol construido
 
 def insert(root, val):
-    if val < root.val:
-        if root.left is None:
-            root.left = TreeNode(val)
+    if val < root.val:           # Si el valor a insertar es menor al valor actual del nodo
+        if root.left is None:    # Si no hay hijo izquierdo
+            root.left = TreeNode(val)  # Creamos un nuevo nodo a la izquierda
         else:
-            insert(root.left, val)
-    else:
-        if root.right is None:
-            root.right = TreeNode(val)
+            insert(root.left, val)     # Si ya hay hijo izquierdo, seguimos insertando recursivamente
+    else:                        # Si el valor es mayor o igual al nodo actual
+        if root.right is None:   # Si no hay hijo derecho
+            root.right = TreeNode(val) # Creamos un nuevo nodo a la derecha
         else:
-            insert(root.right, val)
+            insert(root.right, val)    # Si ya hay hijo derecho, seguimos insertando recursivamente
 
 def range_query(root, min_val, max_val):
-    result = []
+    result = []                  # Lista para guardar los valores que están en el rango
 
     def inorder(node):
-        if not node:
+        if not node:             # Si el nodo es None, terminamos esta rama
             return
-        if node.val > min_val:
-            inorder(node.left)
-        if min_val <= node.val <= max_val:
-            result.append(node.val)
-        if node.val < max_val:
-            inorder(node.right)
+        if node.val > min_val:   # Si el valor del nodo es mayor al mínimo del rango
+            inorder(node.left)   # Revisamos el subárbol izquierdo
+        if min_val <= node.val <= max_val:  # Si el valor está dentro del rango
+            result.append(node.val)         # Lo agregamos al resultado
+        if node.val < max_val:   # Si el valor del nodo es menor al máximo del rango
+            inorder(node.right)  # Revisamos el subárbol derecho
 
-    inorder(root)
-    return result
+    inorder(root)                # Iniciamos el recorrido desde la raíz
+    return result                # Devolvemos la lista de valores en el rango
 
 
 # Test 1: Normal range

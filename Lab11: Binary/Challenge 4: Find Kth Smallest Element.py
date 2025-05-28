@@ -1,66 +1,74 @@
-# Definición del nodo del Árbol Binario de Búsqueda (BST)
+# Clase para representar cada nodo del árbol
 class TreeNode:
-    def __init__(self, val):
-        self.val = val              # Almacena el valor del nodo
-        self.left = None            # Hijo izquierdo (valores menores)
-        self.right = None           # Hijo derecho (valores mayores)
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
-# Función para insertar un valor en el BST
-def insert_bst(root, val):
-    if root is None:
-        return TreeNode(val)        # Si el árbol está vacío, crea un nuevo nodo
-    if val < root.val:
-        root.left = insert_bst(root.left, val)  # Insertar recursivamente en la izquierda
-    else:
-        root.right = insert_bst(root.right, val)  # Insertar recursivamente en la derecha
-    return root                     # Retorna la raíz actualizada
+# Clase principal del Árbol Binario de Búsqueda
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
 
-# Construye un BST a partir de una lista de valores
-def build_bst(values):
-    root = None
-    for val in values:
-        root = insert_bst(root, val)  # Inserta cada valor en el árbol
-    return root
+    # Insertar un valor en el árbol
+    def insert(self, value):
+        if not self.root:
+            self.root = TreeNode(value)
+        else:
+            self._insert(self.root, value)
 
-# Función para encontrar el k-ésimo elemento más pequeño en el BST
-def kth_smallest(root, k):
-    """Encuentra el k-ésimo elemento más pequeño en un BST usando recorrido inorden."""
+    def _insert(self, node, value):
+        if value < node.value:
+            if node.left:
+                self._insert(node.left, value)
+            else:
+                node.left = TreeNode(value)
+        else:
+            if node.right:
+                self._insert(node.right, value)
+            else:
+                node.right = TreeNode(value)
 
-    def inorder(node):
-        if not node:
-            return None  # Caso base: nodo nulo
-        
-        # Recorrido inorden: primero visita el subárbol izquierdo
-        left = inorder(node.left)
-        if left is not None:
-            return left  # Si ya se encontró el valor, lo retornamos inmediatamente
-        
-        # Procesa el nodo actual
-        self.count += 1  # Aumenta el contador
-        if self.count == k:
-            return node.val  # Si llegamos al k-ésimo, devolvemos el valor
-        
-        # Luego recorre el subárbol derecho
-        return inorder(node.right)
+    # Crear el árbol a partir de una lista
+    def build_from_list(self, values):
+        for value in values:
+            self.insert(value)
 
-    self = type('', (), {})()  # Crea un objeto vacío para mantener la variable de contador
-    self.count = 0             # Inicializa el contador
-    return inorder(root)       # Comienza el recorrido desde la raíz
+    # Encontrar el k-ésimo valor más pequeño (inorden)
+    def kth_smallest(self, k):
+        """📊 Find the kth smallest value in the BST"""
+        result = []
 
+        def in_order(node):
+            if not node or len(result) >= k:
+                return
+            in_order(node.left)
+            result.append(node.value)
+            in_order(node.right)
 
+        in_order(self.root)
 
-# Caso 1: Segundo más pequeño en un BST balanceado
-print(kth_smallest(build_bst([3, 1, 4, 2]), 2) == 2)  # True
+        return result[k - 1] if k <= len(result) else None
 
-# Caso 2: Mínimo (el primer elemento más pequeño)
-print(kth_smallest(build_bst([5, 3, 7, 2, 4, 6, 8]), 1) == 2)  # True
+# 🧪 Casos de prueba
+def test_kth_smallest():
+    bst1 = BinarySearchTree()
+    bst1.build_from_list([3, 1, 4, 2])
+    print("🧪 Test 1:", bst1.kth_smallest(2) == 2)  # 🎯
 
-# Caso 3: El valor más grande (último)
-print(kth_smallest(build_bst([5, 3, 7, 2, 4, 6, 8]), 7) == 8)  # True
+    bst2 = BinarySearchTree()
+    bst2.build_from_list([5, 3, 7, 2, 4, 6, 8])
+    print("🧪 Test 2:", bst2.kth_smallest(1) == 2)  # 📉 Primer valor
 
-# Caso 4: Elemento en el medio
-print(kth_smallest(build_bst([4, 2, 6, 1, 3, 5, 7]), 4) == 4)  # True
+    print("🧪 Test 3:", bst2.kth_smallest(7) == 8)  # 📈 Último valor
 
-# Caso 5: Árbol con un solo nodo
-print(kth_smallest(build_bst([10]), 1) == 10)  # True
+    bst3 = BinarySearchTree()
+    bst3.build_from_list([4, 2, 6, 1, 3, 5, 7])
+    print("🧪 Test 4:", bst3.kth_smallest(4) == 4)  # 🔗 Valor en el medio
 
+    bst4 = BinarySearchTree()
+    bst4.build_from_list([10])
+    print("🧪 Test 5:", bst4.kth_smallest(1) == 10)  # 🌱 Solo un nodo
+
+# 🚀 Ejecutar pruebas
+test_kth_smallest()
